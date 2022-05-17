@@ -104,9 +104,9 @@ def authorized():
             user = User.query.filter_by(username="admin").first()
             isLogin = login_user(user)
             if isLogin:
-                app.logger.warning('Login success.')
+                app.logger.info('Login success.')
             else:
-                app.logger.warning('Login Failed.')
+                app.logger.info('Login Failed.')
             _save_cache(cache)
         return redirect(url_for('home'))
     except Exception as e:
