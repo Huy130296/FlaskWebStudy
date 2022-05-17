@@ -1,7 +1,7 @@
 """
 Routes and views for the flask application.
 """
-
+import logging
 from datetime import datetime
 from flask import render_template, flash, redirect, request, session, url_for
 from werkzeug.urls import url_parse
@@ -66,12 +66,14 @@ def post(id):
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+    app.logger.info('Login Failed.', stacklevel=logging.INFO)
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
+        app.logger.info('Login Success.', stacklevel=logging.INFO)
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -102,11 +104,7 @@ def authorized():
             # Note: In a real app, we'd use the 'name' property from session["user"] below
             # Here, we'll use the admin username for anyone who is authenticated by MS
             user = User.query.filter_by(username="admin").first()
-            isLogin = login_user(user)
-            if isLogin:
-                app.logger.info('Login success.')
-            else:
-                app.logger.info('Login Failed.')
+            login_user(user)
             _save_cache(cache)
         return redirect(url_for('home'))
     except Exception as e:
