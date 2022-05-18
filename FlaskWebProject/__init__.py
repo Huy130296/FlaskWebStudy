@@ -9,7 +9,7 @@ from flask_login import LoginManager
 from flask_session import Session
 
 app = Flask(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 app.config.from_object(Config)
 # TODO: Add any logging levels and handlers with app.logger
 wsgi_app = app.wsgi_app
